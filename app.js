@@ -12,7 +12,7 @@ var uiController = (function () {
     },
   };
 })();
-
+var find = (function () {})();
 var financeController = (function () {})();
 
 var appController = (function (uiController, fnController) {
