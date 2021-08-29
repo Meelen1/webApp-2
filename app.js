@@ -1,33 +1,27 @@
-var uiController = (function () {
-  var x = 100;
+//Дэлгэцтэй ажиллах контоллер
+var uiController = (function () {})();
 
-  function add(y) {
-    return x + y;
-  }
-
-  return {
-    publicAdd: function (a) {
-      a = add(a);
-      console.log("боловсруулсан утга : " + a);
-    },
-  };
-})();
-var find = (function () {})();
+//санхүүтэй ажиллах контроллер
 var financeController = (function () {})();
 
-var appController = (function (uiController, fnController) {
-  uiController.publicAdd(50);
-})(uiController, financeController);
-
-var hunController = (function () {
-  var bodol = "Javascript толгой эргүүлмээр юм";
-  function tsusGuih() {}
-
-  function huchilturugchiigAgaaraasSorjTsusruuOruulah() {}
-
-  return {
-    yarih: function () {
-      console.log("hi");
-    },
+//Програмын холбогч контроллер
+var appController = (function (uiController, financeController) {
+  var ctrlAddItem = function () {
+    //1.оруулах өгөгдлийг дэлгэцнээс олжавна.
+    console.log("дэлгэцнээс өгөгдөл авах хэсэг");
+    //2. олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+    //3.олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
+    //4. төсвийг тооцоолно.
+    //5. эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
   };
-})();
+
+  document.querySelector(".add__btn").addEventListener("click", function () {
+    ctrlAddItem();
+  });
+
+  document.addEventListener("keypress", function (event) {
+    if (event.keyCode === 13 || event.which === 13) {
+      ctrlAddItem();
+    }
+  });
+})(uiController, financeController);
