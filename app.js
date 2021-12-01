@@ -1,4 +1,4 @@
-//Дэлгэцтэй ажиллах контоллер
+// Дэлгэцтэй ажиллах контроллер
 var uiController = (function () {
   var DOMstrings = {
     inputType: ".add__type",
@@ -9,7 +9,7 @@ var uiController = (function () {
     expenseList: ".expenses__list",
     tusuvLabel: ".budget__value",
     incomeLabel: ".budget__income--value",
-    expenseLabel: ".budget__expenses--value",
+    expeseLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
     containerDiv: ".container",
   };
@@ -17,7 +17,7 @@ var uiController = (function () {
   return {
     getInput: function () {
       return {
-        type: document.querySelector(DOMstrings.inputType).value,
+        type: document.querySelector(DOMstrings.inputType).value, // exp, inc
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: parseInt(document.querySelector(DOMstrings.inputValue).value),
       };
@@ -32,7 +32,7 @@ var uiController = (function () {
         DOMstrings.inputDescription + ", " + DOMstrings.inputValue
       );
 
-      // Conver List to Array
+      // Convert List to Array
       var fieldsArr = Array.prototype.slice.call(fields);
 
       fieldsArr.forEach(function (el, index, array) {
@@ -46,7 +46,7 @@ var uiController = (function () {
       document.querySelector(DOMstrings.tusuvLabel).textContent = tusuv.tusuv;
       document.querySelector(DOMstrings.incomeLabel).textContent =
         tusuv.totalInc;
-      document.querySelector(DOMstrings.expenseLabel).textContent =
+      document.querySelector(DOMstrings.expeseLabel).textContent =
         tusuv.totalExp;
 
       if (tusuv.huvi !== 0) {
@@ -64,31 +64,31 @@ var uiController = (function () {
     },
 
     addListItem: function (item, type) {
-      // 1.Орлого зарлагын элементийг агуулсан html-ийг бэлтгэнэ.
+      // Орлого зарлагын элементийг агуулсан html-ийг бэлтгэнэ.
       var html, list;
       if (type === "inc") {
         list = DOMstrings.incomeList;
         html =
-          '<div class="item clearfix" id="inc-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="inc-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__delete">            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div>        </div></div>';
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+          '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div>          <div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
-      //тэр html дотроо орлого зарлагын утгуудыг REPLACE ашиглаж өөрчилж өгнө
+      // Тэр HTML дотроо орлого зарлагын утгуудыг REPLACE ашиглаж өөрчилж
       html = html.replace("%id%", item.id);
       html = html.replace("$$DESCRIPTION$$", item.description);
       html = html.replace("$$VALUE$$", item.value);
 
-      //бэлтгэсэн HTML ээ DOM руу хийж өгнө.
+      // Бэлтгэсэн HTML ээ DOM руу хийж өгнө.
       document.querySelector(list).insertAdjacentHTML("beforeend", html);
     },
   };
 })();
 
-//санхүүтэй ажиллах контроллер
-// private data
+// Санхүүтэй ажиллах контроллер
 var financeController = (function () {
+  // private data
   var Income = function (id, description, value) {
     this.id = id;
     this.description = description;
@@ -100,6 +100,17 @@ var financeController = (function () {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+
+  Expense.prototype.calcPercentage = function (totalIncome) {
+    if (totalIncome > 0)
+      this.percentage = Math.round((this.value / totalIncome) * 100);
+    else this.percentage = 0;
+  };
+
+  Expense.prototype.getPercentage = function () {
+    return this.percentage;
   };
 
   var calculateTotal = function (type) {
@@ -117,31 +128,49 @@ var financeController = (function () {
       inc: [],
       exp: [],
     },
+
     totals: {
       inc: 0,
       exp: 0,
     },
+
     tusuv: 0,
 
-    guvi: 0,
+    huvi: 0,
   };
 
   return {
     tusuvTootsooloh: function () {
-      // нийт орлогын нийлбэрийг тооцоолно
+      // Нийт орлогын нийлбэрийг тооцоолно
       calculateTotal("inc");
 
-      //нийт зарлагын нийлбэрийг тооцоолно
+      // Нийт зарлагын нийлбэрийг тооцоолно
       calculateTotal("exp");
 
-      //төсөвийг шинээр тооцоолно
+      // Төсвийг шинээр тооцоолно
       data.tusuv = data.totals.inc - data.totals.exp;
 
-      // орлого зарлагын хувийг тооцоолно
-      data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+      // Орлого зарлагын хувийг тооцоолно
+      if (data.totals.inc > 0)
+        data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
+      else data.huvi = 0;
     },
 
-    tusuviigAvah: function () {
+    calculatePercentages: function () {
+      data.items.exp.forEach(function (el) {
+        el.calcPercentage(data.totals.inc);
+      });
+    },
+
+    getPercentages: function () {
+      var allPercentages = data.items.exp.map(function (el) {
+        return el.getPercentage();
+      });
+
+      return allPercentages;
+    },
+
+    tusviigAvah: function () {
       return {
         tusuv: data.tusuv,
         huvi: data.huvi,
@@ -165,8 +194,6 @@ var financeController = (function () {
     addItem: function (type, desc, val) {
       var item, id;
 
-      // identification = id []
-
       if (data.items[type].length === 0) id = 1;
       else {
         id = data.items[type][data.items[type].length - 1].id + 1;
@@ -182,46 +209,57 @@ var financeController = (function () {
 
       return item;
     },
+
     seeData: function () {
       return data;
     },
   };
 })();
 
-//Програмын холбогч контроллер
+// Програмын холбогч контроллер
 var appController = (function (uiController, financeController) {
   var ctrlAddItem = function () {
-    //1.оруулах өгөгдлийг дэлгэцнээс олжавна.
+    // 1. Оруулах өгөгдлийг дэлгэцээс олж авна.
     var input = uiController.getInput();
+
     if (input.description !== "" && input.value !== "") {
-      //2. олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
+      // 2. Олж авсан өгөгдлүүдээ санхүүгийн контроллерт дамжуулж тэнд хадгална.
       var item = financeController.addItem(
         input.type,
         input.description,
         input.value
       );
 
-      //3.олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана.
+      // 3. Олж авсан өгөгдлүүдээ вэб дээрээ тохирох хэсэгт нь гаргана
       uiController.addListItem(item, input.type);
       uiController.clearFields();
 
-      //tusviig shineer toocoolnood delegetsend uzuulne.
+      // Төсвийг шинээр тооцоолоод дэлгэцэнд үзүүлнэ.
       updateTusuv();
     }
   };
 
   var updateTusuv = function () {
-    //4. tusuviig toocoolno
+    // 4. Төсвийг тооцоолно
     financeController.tusuvTootsooloh();
 
-    //5. ecesiin uldegdel
-    var tusuv = financeController.tusuviigAvah();
+    // 5. Эцсийн үлдэгдэл,
+    var tusuv = financeController.tusviigAvah();
 
-    //6. tusviin toocoog delgecend gargah
+    // 6. Төсвийн тооцоог дэлгэцэнд гаргана.
     uiController.tusviigUzuuleh(tusuv);
+
+    // 7. Элементүүдийн хувийг тооцоолно
+    financeController.calculatePercentages();
+
+    // 8. Элементүүдийн хувийг хүлээж авна
+    var allPercentages = financeController.getPercentages();
+
+    // 9. Эдгээр хувийг дэлгэцэнд гаргана.
+    console.log(allPercentages);
   };
 
-  var setupEventListener = function () {
+  var setupEventListeners = function () {
     var DOM = uiController.getDOMstrings();
 
     document.querySelector(DOM.addBtn).addEventListener("click", function () {
@@ -240,21 +278,21 @@ var appController = (function (uiController, financeController) {
         var id = event.target.parentNode.parentNode.parentNode.parentNode.id;
 
         if (id) {
-          //inc-2
+          // inc-2
           var arr = id.split("-");
           var type = arr[0];
           var itemId = parseInt(arr[1]);
-          console.log(type + " : " + itemId);
 
-          // 1. санхүүгийн модулиас type,  id ашиглаад устгана.
+          console.log(type + " ===> " + itemId);
+
+          // 1. Санхүүгийн модулиас type, id ашиглаад устгана.
           financeController.deleteItem(type, itemId);
 
-          //2. delgets deerees ene elementiig ustgana
+          // 2. Дэлгэц дээрээс энэ элементийг устгана
           uiController.deleteListItem(id);
 
-          //3. uldegdel toocoog shinechilj haruulna.
-
-          //tusviig shineer toocoolnood delegetsend uzuulne.
+          // 3. Үлдэгдэл тооцоог шинэчилж харуулна.
+          // Төсвийг шинээр тооцоолоод дэлгэцэнд үзүүлнэ.
           updateTusuv();
         }
       });
@@ -269,7 +307,7 @@ var appController = (function (uiController, financeController) {
         totalInc: 0,
         totalExp: 0,
       });
-      setupEventListener();
+      setupEventListeners();
     },
   };
 })(uiController, financeController);
