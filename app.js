@@ -205,14 +205,20 @@ var appController = (function (uiController, financeController) {
       uiController.addListItem(item, input.type);
       uiController.clearFields();
 
-      //4. төсвийг тооцоолно.
-      financeController.tusuvTootsooloh();
-      //5. эцсийн үлдэгдэл, тооцоог дэлгэцэнд гаргана.
-      var tusuv = financeController.tusuviigAvah();
-
-      //6. төсөвийн тооцоог дэлгэцэнд гаргана.
-      uiController.tusviigUzuuleh(tusuv);
+      //tusviig shineer toocoolnood delegetsend uzuulne.
+      updateTusuv();
     }
+  };
+
+  var updateTusuv = function () {
+    //4. tusuviig toocoolno
+    financeController.tusuvTootsooloh();
+
+    //5. ecesiin uldegdel
+    var tusuv = financeController.tusuviigAvah();
+
+    //6. tusviin toocoog delgecend gargah
+    uiController.tusviigUzuuleh(tusuv);
   };
 
   var setupEventListener = function () {
@@ -242,9 +248,14 @@ var appController = (function (uiController, financeController) {
 
           // 1. санхүүгийн модулиас type,  id ашиглаад устгана.
           financeController.deleteItem(type, itemId);
+
           //2. delgets deerees ene elementiig ustgana
           uiController.deleteListItem(id);
+
           //3. uldegdel toocoog shinechilj haruulna.
+
+          //tusviig shineer toocoolnood delegetsend uzuulne.
+          updateTusuv();
         }
       });
   };
